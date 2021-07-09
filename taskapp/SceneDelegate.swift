@@ -2,7 +2,7 @@
 //  SceneDelegate.swift
 //  taskapp
 //
-//  Created by 小池　亮義 on 2021/07/09.
+//  Created by akiyoshi220 on 2021/07/09.
 //
 
 import UIKit
