@@ -9,9 +9,11 @@ import UIKit
 import RealmSwift
 import UserNotifications
 
-class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
+class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, UISearchBarDelegate {
     
     @IBOutlet weak var tableView: UITableView!
+    
+    let searchController = UISearchController(searchResultsController: nil)
     
     // Realmインスタンスを取得する
     let realm = try! Realm()
@@ -26,8 +28,26 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         // Do any additional setup after loading the view.
         tableView.delegate = self
         tableView.dataSource = self
+        searchController.searchBar.placeholder = "カテゴリを入力してください"
+        searchController.searchBar.delegate = self
+        // searchBarフォーカス時に背景色を暗くするか？
+        searchController.obscuresBackgroundDuringPresentation = true
+        // searchBarのスタイル
+        searchController.searchBar.searchBarStyle = UISearchBar.Style.prominent
+        // searchbarのサイズを調整
+        searchController.searchBar.sizeToFit()
+        // tableViewのヘッダーにsearchController.searchBarをセット
+        tableView.tableHeaderView = searchController.searchBar
     }
-    
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        print("searchBar(_ searchBar: UISearchBar, textDidChange searchText: String)")
+        if searchText == "" {
+            taskArray = realm.objects(Task.self).sorted(byKeyPath: "date", ascending: true)
+        } else {
+            taskArray = realm.objects(Task.self).filter("category = %@", searchText)
+        }
+        tableView.reloadData()
+    }
     // データの数（=セルの数）を返すメソッド
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         print("tableView(_ tableView: UITableView, numberOfRowsInSection section: Int)")
